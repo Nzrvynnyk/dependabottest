@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "Weekly"
+      interval: "weekly"
     ignore:
       - dependency-type: "all"
         versions: ["*"]
