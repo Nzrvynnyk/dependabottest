@@ -1,7 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "*"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     target-branch: "develop"
+
+
+branches:
+  ignore:
+    - "master" 
