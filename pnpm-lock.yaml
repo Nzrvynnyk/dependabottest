@@ -2,17 +2,17 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@unocss/reset':
-    specifier: ^0.51.3
-    version: 0.51.3
+    specifier: ^0.50.3
+    version: 0.50.8
   '@vueuse/core':
-    specifier: ^9.13.0
+    specifier: ^9.12.0
     version: 9.13.0(vue@3.2.47)
   '@vueuse/head':
-    specifier: ^1.1.23
+    specifier: ^1.1.21
     version: 1.1.23(vue@3.2.47)
   nprogress:
-    specifier: ^0.2.0
-    version: 0.2.0
+    specifier: ^0.1.0
+    version: 0.1.6
   pinia:
     specifier: ^2.0.34
     version: 2.0.34(typescript@4.9.5)(vue@3.2.47)
@@ -20,7 +20,7 @@ dependencies:
     specifier: ^3.2.47
     version: 3.2.47
   vue-demi:
-    specifier: ^0.13.11
+    specifier: ^0.13.08
     version: 0.13.11(vue@3.2.47)
   vue-i18n:
     specifier: ^9.2.2
@@ -73,8 +73,8 @@ devDependencies:
     specifier: ^8.38.0
     version: 8.38.0
   eslint-plugin-cypress:
-    specifier: ^2.13.2
-    version: 2.13.2(eslint@8.38.0)
+    specifier: ^2.15.1
+    version: 2.15.1(eslint@8.38.0)
   https-localhost:
     specifier: ^4.7.1
     version: 4.7.1
@@ -1800,7 +1800,7 @@ packages:
       ajv: 6.12.6
       debug: 4.3.4(supports-color@8.1.1)
       espree: 9.5.1
-      globals: 13.19.0
+      globals: 13.24.0
       ignore: 5.2.4
       import-fresh: 3.3.0
       js-yaml: 4.1.0
@@ -2732,8 +2732,8 @@ packages:
       '@unocss/preset-mini': 0.51.4
     dev: true
 
-  /@unocss/reset@0.51.3:
-    resolution: {integrity: sha512-hdm9pKj7ih6MLOSjGJisvh0TMnPmyGDMXQDcgGZJATgVuTJtBmXE74nsIgBVRCfjwqDDqmzG2TB0PlpiTFM9mg==}
+  /@unocss/reset@0.50.8:
+    resolution: {integrity: sha512-2WoM6O9VyuHDPAnvCXr7LBJQ8ZRHDnuQAFsL1dWXp561Iq2l9whdNtPuMcozLGJGUUrFfVBXIrHY4sfxxScgWg==}
     dev: false
 
   /@unocss/reset@0.51.4:
@@ -5118,13 +5118,13 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-cypress@2.13.2(eslint@8.38.0):
-    resolution: {integrity: sha512-LlwjnBTzuKuC0A4H0RxVjs0YeAWK+CD1iM9Dp8un3lzT713ePQxfpPstCD+9HSAss8emuE3b2hCNUST+NrUwKw==}
+  /eslint-plugin-cypress@2.15.1(eslint@8.38.0):
+    resolution: {integrity: sha512-eLHLWP5Q+I4j2AWepYq0PgFEei9/s5LvjuSqWrxurkg1YZ8ltxdvMNmdSf0drnsNo57CTgYY/NIHHLRSWejR7w==}
     peerDependencies:
       eslint: '>= 3.2.1'
     dependencies:
       eslint: 8.38.0
-      globals: 11.12.0
+      globals: 13.24.0
     dev: true
 
   /eslint-plugin-es@4.1.0(eslint@8.38.0):
@@ -5990,6 +5990,13 @@ packages:
 
   /globals@13.19.0:
     resolution: {integrity: sha512-dkQ957uSRWHw7CFXLUtUHQI3g3aWApYhfNR2O6jn/907riyTYKVBmxYVROkBcY614FSSeSJh7Xm7SrUWCxvJMQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      type-fest: 0.20.2
+    dev: true
+
+  /globals@13.24.0:
+    resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
     engines: {node: '>=8'}
     dependencies:
       type-fest: 0.20.2
@@ -7595,8 +7602,8 @@ packages:
       set-blocking: 2.0.0
     dev: true
 
-  /nprogress@0.2.0:
-    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
+  /nprogress@0.1.6:
+    resolution: {integrity: sha512-uvFVkacVduQ3NIzurm9QN18W4znheqlAzW7hepgdyQqcGM4cHwyNgWAPnMyNMBfSAlYuxLT4jom1czsHDem+3g==}
     dev: false
 
   /nth-check@2.1.1:
