@@ -60,7 +60,7 @@
     "vite-bundle-visualizer": "^0.6.0",
     "vite-plugin-inspect": "^0.7.20",
     "vite-plugin-pages": "^0.29.0",
-    "vite-plugin-pwa": "^0.14.7",
+    "vite-plugin-pwa": "^0.19.0",
     "vite-plugin-vue-component-preview": "^1.1.6",
     "vite-plugin-vue-inspector": "^3.4.0",
     "vite-plugin-vue-layouts": "^0.8.0",
