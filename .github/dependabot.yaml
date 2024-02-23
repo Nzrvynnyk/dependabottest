@@ -3,10 +3,5 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "deyli"
+      interval: "daily"
     target-branch: "develop"
-
-
-  branches:
-    ignore:
-      - "master" 
