@@ -1,7 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "*"  # Update all ecosystems
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "develop"
+    target-branch: "develop"  # Updates will be created on the "develop" branch
+
+# Exclude specific branches from updates
+branches:
+  ignore:
+    - "master"
