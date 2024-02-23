@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "*"  # Update all ecosystems
+  - package-ecosystem: "npm"  # Update all ecosystems
     directory: "/"
     schedule:
       interval: "daily"
