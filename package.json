@@ -47,7 +47,7 @@
     "lint-staged": "^13.2.1",
     "markdown-it-link-attributes": "^4.0.1",
     "markdown-it-shiki": "^0.8.0",
-    "pnpm": "^8.2.0",
+    "pnpm": "^8.6.8",
     "shiki": "^0.14.1",
     "simple-git-hooks": "^2.8.1",
     "taze": "^0.9.1",
