@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    target-branch: "develop"   
 # Exclude specific branches from updates
 branches:
   ignore:
