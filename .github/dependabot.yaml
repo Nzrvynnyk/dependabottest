@@ -3,9 +3,5 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-    target-branch: "develop"  
-    ignore:
-      - dependency-type: "all"
-        versions: ["*"]
-        target-branch: "master" 
+      interval: "never"
+    target-branch: "develop"
