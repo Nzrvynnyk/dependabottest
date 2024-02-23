@@ -4,8 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "*"  # Updates will be created on the "develop" branch
-
+    target-branch: 
+         - "develop"  # Updates will be created on the "develop" branch
+         - "feature"
 # Exclude specific branches from updates
 branches:
   ignore:
