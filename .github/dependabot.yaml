@@ -4,8 +4,4 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    target-branch: "develop"  
-    ignore:
-      - dependency-type: "all"
-        versions: ["*"]
-        target-branch: "master" 
+    target-branch: "develop"
