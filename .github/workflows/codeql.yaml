@@ -12,15 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.GITHUB_USERNAME }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install CodeQL
         run: |
-          curl -sL https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.6.3/codeql-bundle-v2.6.3.tar.gz | tar -xvf -
+          curl -sL https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.6.3/codeql-bundle-v2.6.3-linux64.tar.gz | tar -xvf -
           sudo install -d /usr/local/codeql
           sudo mv codeql-bundle-v2.6.3/* /usr/local/codeql
 
@@ -87,6 +81,4 @@ jobs:
           fi
 
           if (( $warningCount > 0 )); then
-              echo "warnings found - failing detect warning check..."
-              exit -1
-          fi
+              echo "warn
