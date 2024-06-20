@@ -12,23 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install CodeQL
-        run: |
-          curl -sL https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.6.3/codeql-bundle-v2.6.3-linux64.tar.gz | tar -xvf -
-          sudo install -d /usr/local/codeql
-          sudo mv codeql-bundle-v2.6.3/* /usr/local/codeql
-
+      - name: Checkout repository
+        uses: actions/checkout@v3
+    
       - name: Initialize CodeQL
-        run: |
-          /usr/local/codeql/codeql-cli init
-
-      - name: Autobuild CodeQL database
-        run: |
-          /usr/local/codeql/codeql-cli autobuild
-
-      - name: Perform CodeQL analysis
-        run: |
-          /usr/local/codeql/codeql-cli analyze
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+    
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+    
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
 
       - name: Upload SARIF report
         uses: actions/upload-artifact@v2
