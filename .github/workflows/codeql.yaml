@@ -26,11 +26,10 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
 
-      - name: Upload SARIF report
-        uses: actions/upload-artifact@v2
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          name: sarif-report
-          path: /tmp/codeql/sarif/codeql-result.sarif
+          sarif_file: ${{ steps.analyze.outputs.sarif }}
 
   Detect-Errors:
     runs-on: ubuntu-latest
