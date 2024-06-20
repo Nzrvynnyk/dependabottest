@@ -7,73 +7,117 @@ on:
 
 jobs:
   analyze:
+    name: Analyze
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-    
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: ${{ matrix.language }}
-    
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
-    
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.analyze.outputs.sarif }}
-
-  Detect-Errors:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'csharp', 'javascript' ]
-    needs:
-      - analyze
+        language: [ 'javascript', 'python', 'java' ] # Add your languages here
+
     steps:
-      - name: Download Sarif Report
-        uses: actions/download-artifact@v2
-        with:
-          name: sarif-report
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Detect Errors
-        run: |
-          repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
-          results=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].results[].ruleId')
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
 
-          resultsArray=($results)
-          errorCount=0
-          warningCount=0
-          noteCount=0
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v3
 
-          for var in "${resultsArray[@]}"
-          do
-            severity=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
-            echo "${var} | $severity"
-            if [ "$severity" == "warning" ]; then let warningCount+=1; fi
-            if [ "$severity" == "error" ]; then let errorCount+=1; fi
-            if [ "$severity" == "note" ]; then let noteCount+=1; fi
-          done
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
 
-          echo ""
-          echo "Error Count: $errorCount"
-          echo "Warning Count: $warningCount"
-          echo "Note Count: $noteCount"
-          echo ""
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ github.workspace }}/results.sarif
 
-          if (( $errorCount > 0 )); then
-              echo "errors found - failing detect error check..."
-              exit -1
-          fi
+    - name: Check for critical issues
+      run: |
+        critical_issues=$(jq '[.runs[].results[] | select(.ruleId | contains("critical"))] | length' ${{ github.workspace }}/results.sarif)
+        if [ "$critical_issues" -gt 0 ]; then
+          echo "Critical issues found: $critical_issues"
+          exit 1
+        fi
 
-          if (( $warningCount > 0 )); then
-              echo "warn
+
+
+# jobs:
+#   analyze:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+    
+#       - name: Initialize CodeQL
+#         uses: github/codeql-action/init@v2
+#         with:
+#           languages: ${{ matrix.language }}
+    
+#       - name: Autobuild
+#         uses: github/codeql-action/autobuild@v2
+    
+#       - name: Perform CodeQL Analysis
+#         uses: github/codeql-action/analyze@v2
+
+#       - name: Upload SARIF file
+#         uses: github/codeql-action/upload-sarif@v2
+#         with:
+#           sarif_file: ${{ steps.analyze.outputs.sarif }}
+
+#   Detect-Errors:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         language: [ 'csharp', 'javascript' ]
+#     needs:
+#       - analyze
+#     steps:
+#       - name: Download Sarif Report
+#         uses: actions/download-artifact@v2
+#         with:
+#           name: sarif-report
+
+#       - name: Detect Errors
+#         run: |
+#           repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
+#           results=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].results[].ruleId')
+
+#           resultsArray=($results)
+#           errorCount=0
+#           warningCount=0
+#           noteCount=0
+
+#           for var in "${resultsArray[@]}"
+#           do
+#             severity=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
+#             echo "${var} | $severity"
+#             if [ "$severity" == "warning" ]; then let warningCount+=1; fi
+#             if [ "$severity" == "error" ]; then let errorCount+=1; fi
+#             if [ "$severity" == "note" ]; then let noteCount+=1; fi
+#           done
+
+#           echo ""
+#           echo "Error Count: $errorCount"
+#           echo "Warning Count: $warningCount"
+#           echo "Note Count: $noteCount"
+#           echo ""
+
+#           if (( $errorCount > 0 )); then
+#               echo "errors found - failing detect error check..."
+#               exit -1
+#           fi
+
+#           if (( $warningCount > 0 )); then
+#               echo "warn
