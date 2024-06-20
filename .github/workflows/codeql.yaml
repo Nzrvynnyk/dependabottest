@@ -37,11 +37,6 @@ jobs:
         language: ${{ matrix.language }}
         category: ${{ matrix.language }}      
 
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: "/home/runner/work/dependabottest/results/javascript.sarif"
-
     - name: Check for critical issues
       run: |
         critical_issues=$(jq '[.runs[].results[] | select(.ruleId | contains("critical"))] | length' /home/runner/work/dependabottest/results/javascript.sarif)
