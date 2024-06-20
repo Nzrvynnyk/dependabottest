@@ -1,4 +1,5 @@
-runs-on: ubuntu-latest
+Detect-Errors:
+  runs-on: ubuntu-latest
   strategy:
     fail-fast: false
     matrix:
