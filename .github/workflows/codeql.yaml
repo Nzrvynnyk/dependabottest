@@ -46,14 +46,15 @@ jobs:
   
     - name: Detect Errors
       run: |
-        
-        results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].level')
+       results=$(cat /home/runner/work/dependabottest/results/javascript.sarif  | jq -r '.runs[].results[] | select(.level == "error") |.message')
+        # results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].level')
   
         if [ -z "$results" ]; then count=0; else count=$(echo "$results" | grep -c '^'); fi
         echo "Results: $count"
         echo ""
   
         errorCount=$(echo "$results" | grep -c error)
+        echo $errorCount
         warningCount=$(echo "$results" | grep -c warning)
         noteCount=$(echo "$results" | grep -c note)
   
