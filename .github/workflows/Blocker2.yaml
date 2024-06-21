@@ -21,11 +21,11 @@ jobs:
 
       - name: Get CodeQL Results
         id: get_codeql_results
-        uses: octokit/rest@v18
+        uses: TOKEN
         with:
           endpoints: getPullRequestCodeScanningAlerts
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.repository }}
+          owner: Nzrvynnyk
+          repo: dependabottest
           pull_number: ${{ steps.get_pr_id.outputs }}
           per_page: 100  # Adjust per_page limit if needed
 
