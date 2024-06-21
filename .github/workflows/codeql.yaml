@@ -39,7 +39,7 @@ jobs:
 
     - name: Check for critical issues
       run: |
-        critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("critical")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("Hight")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
         echo $critical_issues
         if [ "$critical_issues" -gt 0 ]; then
           echo "Critical issues found: $critical_issues"
