@@ -4,49 +4,37 @@ on:
   pull_request:
     types: [opened, reopened]
 
+name: CodeQL Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  check-codeql:
+  codeql-analysis:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
-      - name: Get Pull Request ID
-        id: get_pr_id
-        run: echo ${{ github.event.pull_request.number }}
-
-      - name: Get CodeQL Results
-        id: get_codeql_results
-        uses: TOKEN
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
-          endpoints: getPullRequestCodeScanningAlerts
-          owner: Nzrvynnyk
-          repo: dependabottest
-          pull_number: ${{ steps.get_pr_id.outputs }}
-          per_page: 100  # Adjust per_page limit if needed
+          config-file: ./.github/codeql/codeql-config.yml
 
-      - name: Parse CodeQL Results
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: Check CodeQL Results
         run: |
-          results=$(echo ${{ steps.get_codeql_results.outputs }})
-          critical_count=$(echo $results | jq '.alerts | .[] | select(.severity == "critical") | . | length')
-          high_count=$(echo $results | jq '.alerts | .[] | select(.severity == "high") | . | length')
-          if [[ $critical_count -gt 0 || $high_count -gt 0 ]]; then
-            echo "Found critical or high severity vulnerabilities!"
-            exit 1
-          fi
+          curl -X GET \
+          https://api.github.com/repos/${GITHUB_REPO}/code-scanning/alerts \
+          -H 'Authorization: Bearer ${TOKEN}' \
+          -H 'Accept: application/json' | jq '.[] | select(.severity == "CRITICAL" or .severity == "HIGH") | .number'
 
-      - name: Fail Pull Request if Vulnerabilities Found
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "Pull Request blocked due to critical or high severity CodeQL findings."
-            })
-        if: failure()
+      - name: Block PR if Critical or High Severity Findings
+        if: steps.check-codeql-results.outputs.stdout != ''
+        run: |
+          echo "Critical or High Severity Findings detected. Blocking PR."
+          exit 1
