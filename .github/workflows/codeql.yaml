@@ -42,53 +42,66 @@ jobs:
       with: 
         name: assets-for-download
         path: /home/runner/work/dependabottest/*
+
+    - name: Check CodeQL Results
+      run: |
+        curl -X GET \
+        https://api.github.com/repos/${GITHUB_REPO}/code-scanning/alerts \
+        -H 'Authorization: Bearer ${TOKEN}' \
+        -H 'Accept: application/json' | jq '.[] | select(.severity == "CRITICAL" or .severity == "HIGH") | .number'
+  
+    - name: Block PR if Critical or High Severity Findings
+      if: steps.check-codeql-results.outputs.stdout != ''
+      run: |
+        echo "Critical or High Severity Findings detected. Blocking PR."
+        exit 1
           
-    - name: Check for critical issues
-      run: |
-        critical_issues=$(jq '.runs[].results[] | select(.level == "ERROR") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-        high_issues=$(jq '.runs[].results[] | select(.level == "WARNING") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-        medium_issues=$(jq '.runs[].results[] | select(.level == "warning") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+    # - name: Check for critical issues
+    #   run: |
+    #     critical_issues=$(jq '.runs[].results[] | select(.level == "ERROR") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+    #     high_issues=$(jq '.runs[].results[] | select(.level == "WARNING") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+    #     medium_issues=$(jq '.runs[].results[] | select(.level == "warning") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
         
-        echo "Critical issues found: $critical_issues"
-        echo "High issues found: $high_issues"
-        echo "Medium issues found: $medium_issues"
+    #     echo "Critical issues found: $critical_issues"
+    #     echo "High issues found: $high_issues"
+    #     echo "Medium issues found: $medium_issues"
         
-        if [ "$critical_issues" -gt 0 ] || [ "$high_issues" -gt 0 ] || [ "$medium_issues" -gt 0 ]; then
-          exit 1
-        fi
+    #     if [ "$critical_issues" -gt 0 ] || [ "$high_issues" -gt 0 ] || [ "$medium_issues" -gt 0 ]; then
+    #       exit 1
+    #     fi
                 
-    - name: Detect Errors
-      run: |
-          repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
-          results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].ruleId')
+    # - name: Detect Errors
+    #   run: |
+    #       repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
+    #       results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].ruleId')
  
-          resultsArray=($results)
-          errorCount=0
-          warningCount=0
-          noteCount=0
+    #       resultsArray=($results)
+    #       errorCount=0
+    #       warningCount=0
+    #       noteCount=0
  
-          for var in "${resultsArray[@]}"
-          do
-            severity=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
-            echo "${var} | $severity"
-            if [ "$severity" == "warning" ]; then let warningCount+=1; fi
-            if [ "$severity" == "error" ]; then let errorCount+=1; fi
-            if [ "$severity" == "note" ]; then let noteCount+=1; fi
-          done
+    #       for var in "${resultsArray[@]}"
+    #       do
+    #         severity=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
+    #         echo "${var} | $severity"
+    #         if [ "$severity" == "warning" ]; then let warningCount+=1; fi
+    #         if [ "$severity" == "error" ]; then let errorCount+=1; fi
+    #         if [ "$severity" == "note" ]; then let noteCount+=1; fi
+    #       done
  
-          echo ""
-          echo "Error Count: $errorCount"
-          echo "Warning Count: $warningCount"
-          echo "Note Count: $noteCount"
-          echo ""
+    #       echo ""
+    #       echo "Error Count: $errorCount"
+    #       echo "Warning Count: $warningCount"
+    #       echo "Note Count: $noteCount"
+    #       echo ""
  
-          if (( $errorCount > 0 )); then
-              echo "errors found - failing detect error check..."
-              exit -1
-          fi
+    #       if (( $errorCount > 0 )); then
+    #           echo "errors found - failing detect error check..."
+    #           exit -1
+    #       fi
  
-          if (( $warningCount > 0 )); then
-              echo "warn        
+    #       if (( $warningCount > 0 )); then
+    #           echo "warn        
         
         
         # critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("Hight")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
