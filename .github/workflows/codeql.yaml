@@ -36,7 +36,13 @@ jobs:
       with:
         language: ${{ matrix.language }}
         category: ${{ matrix.language }}      
-
+      
+    - name: Step 3 - Use the Upload Artifact GitHub Action
+      uses: actions/upload-artifact@v2
+      with: 
+        name: assets-for-download
+        path: /home/runner/work/dependabottest/*
+          
     - name: Check for critical issues
       run: |
         critical_issues=$(jq '.runs[].results[] | select(.level == "ERROR") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
