@@ -4,13 +4,6 @@ on:
   pull_request:
     types: [opened, reopened]
 
-name: CodeQL Analysis
-
-on:
-  pull_request:
-    branches:
-      - main
-
 jobs:
   codeql-analysis:
     runs-on: ubuntu-latest
