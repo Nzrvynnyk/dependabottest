@@ -9,6 +9,8 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    needs:
+      - Scan-TF    
     permissions:
       actions: read
       contents: read
@@ -43,145 +45,30 @@ jobs:
         name: assets-for-download
         path: /home/runner/work/dependabottest/*
 
-    - name: Check CodeQL Results
-      run: |
-        curl -X GET \
-        https://api.github.com/repos/${GITHUB_REPO}/code-scanning/alerts \
-        -H 'Authorization: Bearer ${TOKEN}' \
-        -H 'Accept: application/json' | jq '.[] | select(.severity == "CRITICAL" or .severity == "HIGH") | .number'
+    - name: Download Sarif Report
+      uses: actions/download-artifact@v2
+      with:
+        name: sarif-report
   
-    - name: Block PR if Critical or High Severity Findings
-      if: steps.check-codeql-results.outputs.stdout != ''
+    - name: Detect Errors
       run: |
-        echo "Critical or High Severity Findings detected. Blocking PR."
-        exit 1
-          
-    # - name: Check for critical issues
-    #   run: |
-    #     critical_issues=$(jq '.runs[].results[] | select(.level == "ERROR") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-    #     high_issues=$(jq '.runs[].results[] | select(.level == "WARNING") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-    #     medium_issues=$(jq '.runs[].results[] | select(.level == "warning") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
         
-    #     echo "Critical issues found: $critical_issues"
-    #     echo "High issues found: $high_issues"
-    #     echo "Medium issues found: $medium_issues"
-        
-    #     if [ "$critical_issues" -gt 0 ] || [ "$high_issues" -gt 0 ] || [ "$medium_issues" -gt 0 ]; then
-    #       exit 1
-    #     fi
-                
-    # - name: Detect Errors
-    #   run: |
-    #       repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
-    #       results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].ruleId')
- 
-    #       resultsArray=($results)
-    #       errorCount=0
-    #       warningCount=0
-    #       noteCount=0
- 
-    #       for var in "${resultsArray[@]}"
-    #       do
-    #         severity=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
-    #         echo "${var} | $severity"
-    #         if [ "$severity" == "warning" ]; then let warningCount+=1; fi
-    #         if [ "$severity" == "error" ]; then let errorCount+=1; fi
-    #         if [ "$severity" == "note" ]; then let noteCount+=1; fi
-    #       done
- 
-    #       echo ""
-    #       echo "Error Count: $errorCount"
-    #       echo "Warning Count: $warningCount"
-    #       echo "Note Count: $noteCount"
-    #       echo ""
- 
-    #       if (( $errorCount > 0 )); then
-    #           echo "errors found - failing detect error check..."
-    #           exit -1
-    #       fi
- 
-    #       if (( $warningCount > 0 )); then
-    #           echo "warn        
-        
-        
-        # critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("Hight")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-        # echo $critical_issues
-        # if [ "$critical_issues" -gt 0 ]; then
-        #   echo "Critical issues found: $critical_issues"
-        #   exit 1
-        # fi
-
-
-
-# jobs:
-#   analyze:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Checkout repository
-#         uses: actions/checkout@v3
-    
-#       - name: Initialize CodeQL
-#         uses: github/codeql-action/init@v2
-#         with:
-#           languages: ${{ matrix.language }}
-    
-#       - name: Autobuild
-#         uses: github/codeql-action/autobuild@v2
-    
-#       - name: Perform CodeQL Analysis
-#         uses: github/codeql-action/analyze@v2
-
-#       - name: Upload SARIF file
-#         uses: github/codeql-action/upload-sarif@v2
-#         with:
-#           sarif_file: ${{ steps.analyze.outputs.sarif }}
-
-#   Detect-Errors:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       fail-fast: false
-#       matrix:
-#         language: [ 'csharp', 'javascript' ]
-#     needs:
-#       - analyze
-#     steps:
-#       - name: Download Sarif Report
-#         uses: actions/download-artifact@v2
-#         with:
-#           name: sarif-report
-
-#       - name: Detect Errors
-#         run: |
-#           repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
-#           results=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].results[].ruleId')
-
-#           resultsArray=($results)
-#           errorCount=0
-#           warningCount=0
-#           noteCount=0
-
-#           for var in "${resultsArray[@]}"
-#           do
-#             severity=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
-#             echo "${var} | $severity"
-#             if [ "$severity" == "warning" ]; then let warningCount+=1; fi
-#             if [ "$severity" == "error" ]; then let errorCount+=1; fi
-#             if [ "$severity" == "note" ]; then let noteCount+=1; fi
-#           done
-
-#           echo ""
-#           echo "Error Count: $errorCount"
-#           echo "Warning Count: $warningCount"
-#           echo "Note Count: $noteCount"
-#           echo ""
-
-#           if (( $errorCount > 0 )); then
-#               echo "errors found - failing detect error check..."
-#               exit -1
-#           fi
-
-#           if (( $warningCount > 0 )); then
-#               echo "warn
+        results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].level')
+  
+        if [ -z "$results" ]; then count=0; else count=$(echo "$results" | grep -c '^'); fi
+        echo "Results: $count"
+        echo ""
+  
+        errorCount=$(echo "$results" | grep -c error)
+        warningCount=$(echo "$results" | grep -c warning)
+        noteCount=$(echo "$results" | grep -c note)
+  
+        echo "Error Count: $errorCount"
+        echo "Warning Count: $warningCount"
+        echo "Note Count: $noteCount"
+        echo ""
+  
+        if (( $errorCount > 0 )); then
+            echo "errors found - failing detect error check..."
+            exit -1
+        fi
