@@ -39,12 +39,28 @@ jobs:
 
     - name: Check for critical issues
       run: |
-        critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("Hight")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-        echo $critical_issues
-        if [ "$critical_issues" -gt 0 ]; then
-          echo "Critical issues found: $critical_issues"
+        -e
+        critical_issues=$(jq '.runs[].results[] | select(.level == "critical") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        high_issues=$(jq '.runs[].results[] | select(.level == "high") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        medium_issues=$(jq '.runs[].results[] | select(.level == "medium") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        
+        echo "Critical issues found: $critical_issues"
+        echo "High issues found: $high_issues"
+        echo "Medium issues found: $medium_issues"
+        
+        if [ "$critical_issues" -gt 0 ] || [ "$high_issues" -gt 0 ] || [ "$medium_issues" -gt 0 ]; then
           exit 1
         fi
+                
+        
+        
+        
+        # critical_issues=$(jq '.runs[].results[] | select(.ruleId | contains("Hight")) | .ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        # echo $critical_issues
+        # if [ "$critical_issues" -gt 0 ]; then
+        #   echo "Critical issues found: $critical_issues"
+        #   exit 1
+        # fi
 
 
 
