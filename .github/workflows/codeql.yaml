@@ -46,8 +46,8 @@ jobs:
     - name: Check for Errors
       run: |
         codeql database explore --format=csv ./results.db | grep -v 'warning' | wc -l | awk '{print ($1 > 1) ? 1 : 0}'
+        exit -1
       shell: bash
-      fail-fast: true
   
     # - name: Detect Errors
     #   run: |
