@@ -40,7 +40,7 @@ jobs:
     - name: Check for critical issues
       run: |
         critical_issues=$(jq '.runs[].results[] | select(.level == "critical") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
-        high_issues=$(jq '.runs[].results[] | select(.level == "high") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
+        high_issues=$(jq '.runs[].results[] | select(.level == "error") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
         medium_issues=$(jq '.runs[].results[] | select(.level == "medium") |.ruleId' /home/runner/work/dependabottest/results/javascript.sarif | wc -l)
         
         echo "Critical issues found: $critical_issues"
