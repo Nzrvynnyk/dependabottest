@@ -42,12 +42,14 @@ jobs:
       with: 
         name: assets-for-download
         path: /home/runner/work/dependabottest/*
-
-    - name: Check for Errors
+        
+    - name: Check for Errors (using action outputs)
       run: |
-        codeql database explore --format=csv ./results.db | grep -v 'warning' | wc -l | awk '{print ($1 > 1) ? 1 : 0}'
-        exit -1
-      shell: bash
+        # Access the number of errors directly from the action output
+        echo "Found ${{ steps.analyze.outputs.errorCount }} errors"
+        if [[ ${{ steps.analyze.outputs.errorCount }} -gt 1 ]]; then
+          exit 1
+        fi
   
     # - name: Detect Errors
     #   run: |
