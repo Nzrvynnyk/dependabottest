@@ -60,7 +60,7 @@ jobs:
     - name: Detect Errors
       run: |
           repo=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
-          results=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].results[].ruleId')
+          results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].ruleId')
  
           resultsArray=($results)
           errorCount=0
@@ -69,7 +69,7 @@ jobs:
  
           for var in "${resultsArray[@]}"
           do
-            severity=$(cat $repo/results/${{ matrix.language }}-builtin.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
+            severity=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].tool.driver.rules[] | select(.id=="'$var'").properties."problem.severity"')
             echo "${var} | $severity"
             if [ "$severity" == "warning" ]; then let warningCount+=1; fi
             if [ "$severity" == "error" ]; then let errorCount+=1; fi
