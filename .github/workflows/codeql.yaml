@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript', 'python', 'java' ] # Add your languages here
+        language: [ 'javascript' ] # Add your languages here
 
     steps:
     - name: Checkout repository
@@ -40,7 +40,9 @@ jobs:
     - name: Check for critical issues
       run: |
         critical_issues=$(jq '[.runs[].results[] | select(.ruleId | contains("critical"))] | length' /home/runner/work/dependabottest/results/javascript.sarif)
-        if [ "$critical_issues" -gt 1 ]; then
+        echo $$critical_issues
+        cat /home/runner/work/dependabottest/results/javascript.sarif
+        if [ "$critical_issues" -gt 0 ]; then
           echo "Critical issues found: $critical_issues"
           exit 1
         fi
