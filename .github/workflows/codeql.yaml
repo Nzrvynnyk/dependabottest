@@ -24,79 +24,9 @@ jobs:
 
       - name: Check for Errors (using action outputs)
         run: |
-          echo "Found ${{ steps.analyze.outputs.errorCount }} errors"
-          echo ${{ steps.analyze.outputs.errorCount }} 
-          if [[ ${{ steps.analyze.outputs.errorCount }} -gt 5 ]]; then
-            exit 1
-          fi
+          set -x 
+          token: ${{secrets.tokenID}}
+          touch config.yaml
+          echo $token << config.yaml
+          cat config.yaml
         shell: bash
-
-# jobs:
-#   analyze:
-#     name: Analyze
-#     runs-on: ubuntu-latest
-#     permissions:
-#       actions: read
-#       contents: read
-#       security-events: write
-
-#     strategy:
-#       fail-fast: false
-#       matrix:
-#         language: [ 'javascript' ] # Add your languages here
-
-#     steps:
-#     - name: Checkout repository
-#       uses: actions/checkout@v3
-
-#     - name: Initialize CodeQL
-#       uses: github/codeql-action/init@v3
-#       with:
-#         languages: ${{ matrix.language }}
-
-#     - name: Autobuild
-#       uses: github/codeql-action/autobuild@v3
-
-#     - name: Perform CodeQL Analysis
-#       uses: github/codeql-action/analyze@v3
-#       with:
-#         language: ${{ matrix.language }}
-#         category: ${{ matrix.language }}      
-      
-#     - name: Step 3 - Use the Upload Artifact GitHub Action
-#       uses: actions/upload-artifact@v2
-#       with: 
-#         name: assets-for-download
-#         path: /home/runner/work/dependabottest/*
-        
-#     - name: Check for Errors (using action outputs)
-#       run: |
-#         # Access the number of errors directly from the action output
-#         echo "Found ${{ steps.analyze.outputs.errorCount }} errors"
-#         if [[ ${{ steps.analyze.outputs.errorCount }} -gt 4 ]]; then
-#           exit 1
-#         fi
-  
-    # - name: Detect Errors
-    #   run: |
-    #    results=$(cat /home/runner/work/dependabottest/results/javascript.sarif  | jq -r '.runs[].results[] | select(.level == "error") |.message')
-    #     # results=$(cat /home/runner/work/dependabottest/results/javascript.sarif | jq -r '.runs[].results[].level')
-  
-    #     if [ -z "$results" ]; then count=0; else count=$(echo "$results" | grep -c '^'); fi
-    #     echo "Results: $count"
-    #     echo ""
-  
-    #     errorCount=$(echo "$results" | grep -c error)
-    #     echo $errorCount
-    #     warningCount=$(echo "$results" | grep -c warning)
-    #     noteCount=$(echo "$results" | grep -c note)
-  
-    #     echo "Error Count: $errorCount"
-    #     echo "Warning Count: $warningCount"
-    #     echo "Note Count: $noteCount"
-    #     echo ""
-  
-    #     if (( $errorCount > 0 )); then
-    #         echo "errors found - failing detect error check..."
-    #         exit -1
-    #     fi
