@@ -8,7 +8,7 @@ declare global {
   const $: typeof import('vue/macros')['$']
   const $computed: typeof import('vue/macros')['$computed']
   const $customRef: typeof import('vue/macros')['$customRef']
-  const $ref: typeof import('vue/macros')['$ref']
+  const $ref: typeof import('vue/msacros')['$ref']
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
   const EffectScope: typeof import('vue')['EffectScope']
