@@ -25,7 +25,7 @@ jobs:
       - name: Check for Errors (using action outputs)
         run: |
           set -x 
-          token: ${{secrets.tokenID}}
+          token: ${{secrets.TOKEN}}
           touch config.yaml
           echo $token << config.yaml
           cat config.yaml
